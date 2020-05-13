@@ -41,7 +41,7 @@ colnames(meltedCopdER) <- c("County", "Year", "Value")
 meltedCopdER$County <- toupper(meltedCopdER$County)
 meltedCopdER[meltedCopdER=="MIAMI-DADE"] <-"DADE"
 meltedCopdER$Value <- as.numeric(meltedCopdER$Value)
-meltedCopdER$Topic <- 'ER Visits for COPD'
+meltedCopdER$Topic <- 'ER Visits for COPD (Pulmonary)'
 
 HealthData <- rbind(HealthData, meltedCopdER)
 
@@ -63,25 +63,6 @@ meltedHeatER$Topic <- 'ER Visits for Heat-Related Illness'
 
 HealthData <- rbind(HealthData, meltedHeatER)
 
-#### HEAT DEATH DATA ####
-HeatDth <- read.csv('HeatDth.csv')
-
-names(HeatDth) <- lapply(HeatDth[1, ], as.character)
-HeatDth <- HeatDth[-1, ]
-HeatDth <- HeatDth[,-2]
-HeatDth <- HeatDth[,-16]
-
-meltedHeatDth <- melt(HeatDth, "Geography")
-colnames(meltedHeatDth) <- c("County", "Year", "Value")
-meltedHeatDth$County <- toupper(meltedHeatDth$County)
-meltedHeatDth[meltedHeatDth=="MIAMI-DADE"] <-"DADE"
-meltedHeatDth$Value <- as.numeric(meltedHeatDth$Value)
-meltedHeatDth$Topic <- 'Heat-Related Deaths (in summer)'
-
-HealthData <- rbind(HealthData, meltedHeatDth)
-
-
-
 ################################
 #####   SAVE  HEALTH DATA   ####
 ################################
@@ -92,6 +73,7 @@ write.csv(HealthData, "HealthData.csv")
 #####      for tableau      ####
 ################################
 Florida.HealthData <- left_join(fl.boundary1, HealthData, by = c('COUNTYNAME' = 'County'))
+Florida.HealthData$Year <- as.factor(Florida.HealthData$Year)
 Florida.HealthData.sf <- st_as_sf(Florida.HealthData)
 st_write(Florida.HealthData.sf, dsn = "Florida Health", driver = "ESRI Shapefile")
 
