@@ -1,8 +1,8 @@
 library(dplyr)
 library(data.table)
 
-qualtrics = read.csv('C:/Users/jennatingum/Desktop/4.16 qualtrics/Barometer FL - Data Collection_April 16, 2020_09.11.csv', header=TRUE)
-setwd('C:/Users/jennatingum/Desktop/CommunityData')
+setwd('C:/Users/jenna/Desktop')
+qualtrics = read.csv('Barometer FL - Data Collection_May 6, 2020_07.36.csv', header=TRUE)
 
 #################
 # data cleaning #
@@ -17,30 +17,45 @@ qualtrics = qualtrics[,-c(1:17)]
 # remove new first row (test submission - blank)
 qualtrics = qualtrics[-1,]
 
+# remove duplicate of Franklin county (keep Claire Hodges)
+qualtrics = qualtrics[!(qualtrics$Q14 == 'Regan'),]
+
+# quick check
+length(unique(qualtrics$Q15)) #67
+
 # rename columns 
+# write to csv to look at in excel
 colnames(qualtrics)[1:11] = c('first','last','county','resilience.officer','key.industries','select.industries',
                         'other.industries', 'money.impacts','money.preparedness', 'vulnerability assessment','FEMA.aid')
 
-Community = qualtrics[,1:11]
+Community = qualtrics[,c(1:11)]
 Community$county = toupper(Community$county)
+
+write.csv(Community, 'CommunityQualtrics0.csv')
+
+# verified FEMA data using this site: https://www.fema.gov/disasters?field_dv2_state_territory_tribal_value_selective=FL&field_dv2_incident_type_tid=All&field_dv2_declaration_type_value=DR&field_dv2_incident_begin_value%5Bvalue%5D%5Bmonth%5D=&field_dv2_incident_begin_value%5Bvalue%5D%5Byear%5D=&field_dv2_incident_end_value%5Bvalue%5D%5Bmonth%5D=&field_dv2_incident_end_value%5Bvalue%5D%5Byear%5D=
+# changed FEMA.aid column 
+# plus I manually changed Miami-Dade to Dade
+Community = read.csv('CommunityQualtrics0.csv')
 
 
 #################
 # Topic column  #
 #################
-tableau.cols = c('first','last','county','resilience.officer','key.industries','vulnerability assessment','FEMA.aid')
+tableau.cols = c('county','resilience.officer','vulnerability.assessment','FEMA.aid')
 
 Community.Tableau = Community[,tableau.cols]
-colnames(Community.Tableau)[4] = "Local Resilience Officer?"
-colnames(Community.Tableau)[5] = "Key Industries Impacted by Climate change?"
-colnames(Community.Tableau)[6] = "Conducted a Vulnerability Assessment?"
-colnames(Community.Tableau)[7] = "Applied for FEMA disaster aid in last 10 years?"
+colnames(Community.Tableau)[2] = "Local Resilience Officer?"
+colnames(Community.Tableau)[3] = "Conducted a Vulnerability Assessment?"
+colnames(Community.Tableau)[4] = "Applied for FEMA disaster aid in last 10 years?"
 
 
-testCommunity = melt(Community.Tableau, id = c("first","last","county"))
+testCommunity = melt(Community.Tableau, id = 'county')
 
 testCommunity$value = ifelse(testCommunity$value == "", "No Data", testCommunity$value)
-testCommunity[testCommunity=="MIAMI-DADE"] <-"DADE"
+
+
+
 
 
 #################
@@ -54,27 +69,3 @@ st_write(Florida.CommunityData.sf, dsn = "Florida Community", driver = "ESRI Sha
 
 
 
-###################
-# for region site #
-###################
-
-SoutheastCom = Florida.CommunityData[Florida.CommunityData$Region == 'Southeast',]
-SoutheastCom = SoutheastCom[,-c(1,2,3,5,6,7)]
-
-CentralCom = Florida.CommunityData[Florida.CommunityData$Region == "Central", ]
-CentralCom = CentralCom[,-c(1,2,3,5,6,7)]
-
-NortheastCom = Florida.CommunityData[Florida.CommunityData$Region == "Northeast", ]
-NortheastCom = NortheastCom[,-c(1,2,3,5,6,7)]
-
-NorthCentralCom = Florida.CommunityData[Florida.CommunityData$Region == "North Central", ]
-NorthCentralCom = NorthCentralCom[,-c(1,2,3,5,6,7)]
-
-NorthwestCom = Florida.CommunityData[Florida.CommunityData$Region == "Northwest", ]
-NorthwestCom = NorthwestCom[,-c(1,2,3,5,6,7)]
-
-WestCentralCom = Florida.CommunityData[Florida.CommunityData$Region == "West Central", ]
-WestCentralCom = WestCentralCom[,-c(1,2,3,5,6,7)]
-
-EastCentralCom = Florida.CommunityData[Florida.CommunityData$Region == "East Central", ]
-CentralCom = CentralCom[,-c(1,2,3,5,6,7)]

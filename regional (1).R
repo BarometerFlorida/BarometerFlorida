@@ -11,10 +11,10 @@ library(scales)
 ####       REGIONS      ####
 ############################
 
-setwd('C:/Users/jennatingum/Desktop/Florida_Counties')
+setwd('C:/Users/jenna/Desktop/Florida_Counties/Florida_Counties')
 
 #### LOAD IN DATA  ####
-fl.boundary <- st_read("C:/Users/jennatingum/Desktop/Florida_Counties")
+fl.boundary <- st_read("C:/Users/jenna/Desktop/Florida_Counties/Florida_Counties")
 fl.boundary$COUNTYNAME = as.character(fl.boundary$COUNTYNAME)
 
 
