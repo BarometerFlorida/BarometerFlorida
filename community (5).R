@@ -24,7 +24,6 @@ qualtrics = qualtrics[!(qualtrics$Q14 == 'Regan'),]
 length(unique(qualtrics$Q15)) #67
 
 # rename columns 
-# write to csv to look at in excel
 colnames(qualtrics)[1:11] = c('first','last','county','resilience.officer','key.industries','select.industries',
                         'other.industries', 'money.impacts','money.preparedness', 'vulnerability assessment','FEMA.aid')
 
@@ -53,8 +52,6 @@ colnames(Community.Tableau)[4] = "Applied for FEMA disaster aid in last 10 years
 testCommunity = melt(Community.Tableau, id = 'county')
 
 testCommunity$value = ifelse(testCommunity$value == "", "No Data", testCommunity$value)
-
-
 
 
 
