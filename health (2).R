@@ -77,9 +77,6 @@ Florida.HealthData$Year <- as.factor(Florida.HealthData$Year)
 Florida.HealthData.sf <- st_as_sf(Florida.HealthData)
 st_write(Florida.HealthData.sf, dsn = "Florida Health", driver = "ESRI Shapefile")
 
-# I'd like to make a dataset based off of the sf Health Data but cut off the geographical data
-# hopefully this will allow me to plot time series graphs
-head(Florida.HealthData)
 
 Florida.HealthData = as.data.frame(Florida.HealthData)
 geometry.cols = c('OBJECTID','DEPCODE','COUNTY','DATESTAMP','ShapeSTAre','ShapeSTLen',"geometry")
